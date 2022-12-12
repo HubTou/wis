@@ -44,13 +44,13 @@ Use the *-e|--exclude FILE* option to provide a one-excluded-case-insensitive-ke
 
 You'll then obtain a list of records matching at least one of your keywords, and not matching any of the excluded keywords.
 
-If you use the *-1|--first* option, you'll instead only obtain the first line of each matching record (whether it is an inetnum, inet6num, organisatio, aut-num, role, route or mntner record).
+If you use the *-1|--first* option, you'll instead only obtain the first line of each matching record (whether it is an inetnum, inet6num, organisation, aut-num, role, route or mntner record).
 
-If you use the *-i|--inet4* and/or *-I|--inet6* option(s), you'll instead obtain only matching inetnum or inet6num records reformatted as pipe-separated-values of networks:
+If you use the *-i|--inet4* and/or *-I|--inet6* option(s), you'll instead obtain only matching inetnum or inet6num records reformatted as a pipe-separated-values of networks:
 ```
 starting IP address|ending IP Address|netname|descr|org|country
 ```
-If you add the *-r|--range* option to the last ones, you'll instead obtain only matching inetnum or inet6num records reformatted as pipe-separated-values of hosts:
+If you add the *-r|--range* option to the last ones, you'll instead obtain only matching inetnum or inet6num records reformatted as a pipe-separated-values of hosts:
 ```
 IP address|type|subnet|netname|descr|org|country
 ```
