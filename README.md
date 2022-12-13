@@ -40,7 +40,7 @@ You can either select one specific database (in plain text or gzipped format) us
 
 Use the *-c|--case* option to make your searches case sensitive.
 
-Use the *-e|--exclude FILE* option to provide a one-excluded-case-insensitive-keyword-per-line to filter out matching records.
+Use the *-e|--exclude FILE* option to provide a one-excluded-case-insensitive-keyword-per-line file to filter out matching records.
 
 You'll then obtain a list of records matching at least one of your keywords, and not matching any of the excluded keywords.
 
@@ -121,6 +121,8 @@ To be tested under Windows.
 
 ## HISTORY
 This implementation was made for the [PNU project](https://github.com/HubTou/PNU).
+
+Its first use case was to identify all my company's IP addresses ranges through the world, helping to secure our networks and identify shadow IT...
 
 The initial name of the command was "AS Search", but the resulting short form seemed problematic... So I went for a **wis**er name :-)
 
