@@ -124,7 +124,7 @@ This implementation was made for the [PNU project](https://github.com/HubTou/PNU
 
 Its first use case was to identify all my company's IP addresses ranges through the world, helping to secure our networks and identify shadow IT...
 
-The initial name of the command was "AS Search", but the resulting short form seemed problematic... So I went for a **wis**er name :-)
+The initial name of the command was "AS Search", but the resulting short form seemed problematic... So I went for a **wis**er name :smiley:
 
 ## LICENSE
 It is available under the [3-clause BSD license](https://opensource.org/licenses/BSD-3-Clause).
