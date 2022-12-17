@@ -154,4 +154,4 @@ LACNIC does not provide useful *inetnum* and *inet6num* information.
 
 ARIN, APNIC/IDNIC, APNIC/CNNIC, APNIC/VNNIC and APNIC/IRINN do not provide *domain*, *inetnum*, *inet6num* and *organisation* information at all.
 
-However you can find *route* information from all of them, which can then use with regular WHOIS queries.
+However you can find *route* information from all of them, which can then be used with regular WHOIS queries.
