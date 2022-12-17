@@ -58,7 +58,7 @@ IP address|type|subnet|netname|descr|org|country
 ```
 Where type is either "Network" for the first address in a subnet, "Broadcast" for the last address in a subnet or "IP address" for the rest.
 
-If you use the *-s|--summary" option, you'll get a summary of the record types found (from the first line of each matching record, before the colon).
+If you use the *-s|--summary* option, you'll get a summary of the record types found (from the first line of each matching record, before the colon).
 
 If you use the *-S|--summaryonly* option you'll only get that.
 
