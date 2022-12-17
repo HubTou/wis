@@ -12,7 +12,7 @@ pip install [pytnix](https://pypi.org/project/pytnix/)
 # WIS(1)
 
 ## NAME
-WIS - Bulk WhoIs Search
+wis - Bulk WHOIS Search
 
 ## SYNOPSIS
 **wis**    
@@ -24,6 +24,8 @@ WIS - Bulk WhoIs Search
 \[-i|--inet4\]
 \[-I|--inet6\]
 \[-r|--range\]
+\[-s|--summary\]
+\[-S|--summaryonly\]
 \[--debug\]
 \[--help|-?\]
 \[--version\]
@@ -32,9 +34,9 @@ KEYWORD
 \[...\]
 
 ## DESCRIPTION
-The **wis** utility searches for keyword(s) within WhoIs bulk database(s).
+The **wis** utility searches for keyword(s) within bulk WHOIS database(s).
 
-Beside saving multiple WHOIS queries, using pre-downloaded WhoIs bulk databases enables to do plain text searches on all the WhoIs records.
+Beside saving multiple WHOIS queries, using pre-downloaded bulk WHOIS databases enables to do plain text searches on all the WHOIS records.
 
 You can either select one specific database (in plain text or gzipped format) using the *-f|--filename FILE* option, or/and a directory containing all your databases using the *-d|--dirname DIR* option.
 
@@ -56,6 +58,10 @@ IP address|type|subnet|netname|descr|org|country
 ```
 Where type is either "Network" for the first address in a subnet, "Broadcast" for the last address in a subnet or "IP address" for the rest.
 
+If you use the *-s|--summary" option, you'll get a summary of the record types found (from the first line of each matching record, before the colon).
+
+If you use the *-S|--summaryonly* option you'll only get that.
+
 ### OPTIONS
 Options | Use
 ------- | ---
@@ -67,6 +73,8 @@ Options | Use
 -i\|--inet4|Show only reformatted inetnum records
 -I\|--inet6|Show only reformatted inet6num records
 -r\|--range|Show expanded inet(6)num ranges
+-s\|--summary|Show a summary of the type of matching records
+-S\|--summaryonly|Show only a summary of the type of matching records
 --debug|Enable debug mode
 --help\|-?|Print usage and a short help message and exit
 --version|Print version and exit
@@ -76,24 +84,26 @@ Options | Use
 The WIS_DEBUG environment variable can also be set to any value to enable debug mode.
 
 ## FILES
-The **wis** utility uses WhoIs bulk databases downloaded from the main [Regional Internet Registries (RIR)](https://www.iana.org/numbers).
+The **wis** utility uses bulk WHOIS databases downloaded from the main [Regional Internet Registries (RIR)](https://www.iana.org/numbers) and [National Internet Registries (NIR)](https://en.wikipedia.org/wiki/National_Internet_registry).
 
-The provided "fetch-db.sh" script can be used for doing this.
+The provided "fetch-db-WHOIS.sh" script can be used for doing this.
 
-Be sure to read their respective terms of use before!
+You can also use bulk RR (Routing Registries) databases, that you can download with the provided "fetch-db-RR.sh" script.
+
+Be sure to read the databases respective terms of use before!
 
 ## EXIT STATUS
 The **wis** utility exits 0 on success, and >0 if an error occurs.
 
 ## EXAMPLES
-Assuming that you have installed the available bulk WhoIs databases (in gzipped format) in a directory named "db", and that you made a one-excluded-keyword-per-line file named "excluded.txt", use the following commands:
+Assuming that you have installed the available bulk WHOIS databases (in gzipped format) in a directory named "db", and that you made a one-excluded-keyword-per-line file named "excluded.txt", use the following commands:
 
-* to extract full WhoIs information about matching blocks:
+* to extract full WHOIS information about matching blocks:
 ```Shell
 wis -d db -e excluded.txt keyword1 keyword2 keyword3
 ```
 
-* to extract only the first line of WhoIs information about matching blocks:
+* to extract only the first line of WHOIS information about matching blocks:
 ```Shell
 wis -d db -e excluded.txt -1 keyword1 keyword2 keyword3
 ```
@@ -106,6 +116,11 @@ wis -d db -e excluded.txt -i keyword1 keyword2 keyword3
 * to extract an IPv4 host summary about matching blocks:
 ```Shell
 wis -d db -e excluded.txt -ir keyword1 keyword2 keyword3
+```
+
+* to analyze a database record types:
+```Shell
+wis -f database_name.db.gz -S 
 ```
 
 ## SEE ALSO
@@ -133,5 +148,10 @@ It is available under the [3-clause BSD license](https://opensource.org/licenses
 [Hubert Tournier](https://github.com/HubTou)
 
 ## CAVEAT
-[LACNIC](https://www.lacnic.net/) (Latin America and Caribbean NIC) does not provide a very useful bulk WhoIs database...
+Only the AFRINIC, RIPE, APNIC, APNIC/JPNIC, APNIC/TWNIC and APNIC/KISA databases have useful *domain*, *inetnum*, *inet6num* and *organisation* information.
 
+LACNIC does not provide useful *inetnum* and *inet6num* information.
+
+ARIN, APNIC/IDNIC, APNIC/CNNIC, APNIC/VNNIC and APNIC/IRINN do not provide *domain*, *inetnum*, *inet6num* and *organisation* information at all.
+
+However you can find *route* information from all of them, which can then use with regular WHOIS queries.
