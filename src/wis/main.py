@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" wis - WhoIs Search
+""" wis - Bulk WHOIS search
 License: 3-clause BSD (see https://opensource.org/licenses/BSD-3-Clause)
 Author: Hubert Tournier
 """
@@ -15,7 +15,7 @@ import sys
 import libpnu
 
 # Version string used by the what(1) and ident(1) commands:
-ID = "@(#) $Id: wis - Bulk WhoIs search v0.9.0 (December 12, 2022) by Hubert Tournier $"
+ID = "@(#) $Id: wis - Bulk WHOIS search v1.0.0 (December 17, 2022) by Hubert Tournier $"
 
 # Default parameters. Can be overcome by environment variables, then command line options
 parameters = {
@@ -29,6 +29,9 @@ parameters = {
     "Show inetnum": False,
     "Show inet6num": False,
     "Show expanded ranges": False,
+    "Show summary": False,
+    "Show summary only": False,
+    "Summary": {},
     "Field separator": '|'
 }
 
@@ -40,6 +43,7 @@ def _display_help():
     print("       [-1|--first] [-c|--case] [-d|--dirname DIR]", file=sys.stderr)
     print("       [-e|--exclude EXCLUDE_FILE] [-f|--filename FILE]", file=sys.stderr)
     print("       [-i|--inet4] [-I|--inet6] [-r|--range]", file=sys.stderr)
+    print("       [-s|--summary] [-S|--summaryonly]", file=sys.stderr)
     print("       [--] QUERY [...]", file=sys.stderr)
     print(
         "  ------------------  --------------------------------------------------",
@@ -53,6 +57,8 @@ def _display_help():
     print("  -i|--inet4          Show only reformatted inetnum records", file=sys.stderr)
     print("  -I|--inet6          Show only reformatted inet6num records", file=sys.stderr)
     print("  -r|--range          Show expanded inet(6)num ranges", file=sys.stderr)
+    print("  -s|--summary        Show a summary of the type of matching records", file=sys.stderr)
+    print("  -S|--summaryonly    Show only a summary of the type of matching records", file=sys.stderr)
     print("  --debug             Enable debug mode", file=sys.stderr)
     print("  --help|-?           Print usage and this help message and exit", file=sys.stderr)
     print("  --version           Print version and exit", file=sys.stderr)
@@ -64,7 +70,6 @@ def _display_help():
 def _handle_interrupts(signal_number, current_stack_frame):
     """Prevent SIGINT signals from displaying an ugly stack trace"""
     print(" Interrupted!\n", file=sys.stderr)
-    _display_help()
     sys.exit(0)
 
 
@@ -91,7 +96,7 @@ def _process_command_line():
 
     # option letters followed by : expect an argument
     # same for option strings followed by =
-    character_options = "1cd:e:f:iIr?"
+    character_options = "1cd:e:f:iIrsS?"
     string_options = [
         "case",
         "debug",
@@ -103,6 +108,8 @@ def _process_command_line():
         "inet4",
         "inet6",
         "range",
+        "summary",
+        "summaryonly",
         "version",
     ]
 
@@ -151,6 +158,12 @@ def _process_command_line():
 
         elif option in ("--range", "-r"):
             parameters["Show expanded ranges"] = True
+
+        elif option in ("--summary", "-s"):
+            parameters["Show summary"] = True
+
+        elif option in ("--summaryonly", "-S"):
+            parameters["Show summary only"] = True
 
         elif option == "--version":
             print(ID.replace("@(" + "#)" + " $" + "Id" + ": ", "").replace(" $", ""))
@@ -206,9 +219,10 @@ def process_inetnum_block(block):
         networks = [net for net in ipaddress.summarize_address_range(start_ip, end_ip)]
         for network in networks:
             for host in network:
+                last_host = network[-1]
                 if host == network[0]:
                     address_type = "Network"
-                elif host == network[-1]:
+                elif host == last_host:
                     address_type = "Broadcast"
                 else:
                     address_type = "IP address"
@@ -237,7 +251,73 @@ def process_inetnum_block(block):
 ################################################################################
 def process_inet6num_block(block):
     """Process an inet6num text block and eventually print it"""
-    # TODO
+    details = {"start": "", "stop": "", "netname": "", "descr": "", "org": "", "country": ""}
+    for line in block:
+        if line.startswith("inet6num:"):
+            inet6num = re.sub(r"^inet6num:[ 	]*", "", line)
+            inet_start = re.sub(r" - .*$", "", inet6num)
+            inet_stop = re.sub(r"^.* - ", "", inet6num)
+            details["start"] = inet_start
+            details["stop"] = inet_stop
+        elif line.startswith("netname:"):
+            netname = re.sub(r"^netname:[ 	]*", "", line)
+            if details["netname"]:
+                details["netname"] += ", " + netname
+            else:
+                details["netname"] = netname
+        elif line.startswith("descr:"):
+            descr = re.sub(r"^descr:[ 	]*", "", line)
+            if details["descr"]:
+                details["descr"] += ", " + descr
+            else:
+                details["descr"] = descr
+        elif line.startswith("org:"):
+            org = re.sub(r"^org:[ 	]*", "", line)
+            if details["org"]:
+                details["org"] += ", " + org
+            else:
+                details["org"] = org
+        elif line.startswith("country:"):
+            country = re.sub(r"^country:[ 	]*", "", line)
+            if details["country"]:
+                details["country"] += ", " + country
+            else:
+                details["country"] = country
+
+    if parameters["Show expanded ranges"]:
+        start_ip = ipaddress.IPv6Address(details["start"])
+        end_ip = ipaddress.IPv6Address(details["stop"])
+        networks = [net for net in ipaddress.summarize_address_range(start_ip, end_ip)]
+        for network in networks:
+            for host in network:
+                last_host = network[-1]
+                if host == network[0]:
+                    address_type = "Network"
+                elif host == last_host:
+                    address_type = "Broadcast"
+                else:
+                    address_type = "IP address"
+
+                print("{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
+                    str(host), parameters["Field separator"],
+                    address_type, parameters["Field separator"],
+                    str(network), parameters["Field separator"],
+                    details["netname"], parameters["Field separator"],
+                    details["descr"], parameters["Field separator"],
+                    details["org"], parameters["Field separator"],
+                    details["country"]
+                ))
+
+    else:
+        print("{}{}{}{}{}{}{}{}{}{}{}".format(
+            details["start"], parameters["Field separator"],
+            details["stop"], parameters["Field separator"],
+            details["netname"], parameters["Field separator"],
+            details["descr"], parameters["Field separator"],
+            details["org"], parameters["Field separator"],
+            details["country"]
+        ))
+
 
 ################################################################################
 def process_block(block):
@@ -258,22 +338,31 @@ def process_block(block):
 
     # Word exclusion list is case insensitive
     for word in parameters["Excluded list"]:
-        if any(word.lower() in element.lower() for element in block):
+        if any(word in element.lower() for element in block):
             display = False
 
     if display:
-        if parameters["Show first line only"]:
-            print(block[0])
-        elif parameters["Show inetnum"] or parameters["Show inet6num"]:
-            if block[0].startswith("inetnum:") and parameters["Show inetnum"]:
-                process_inetnum_block(block)
+        if not parameters["Show summary only"]:
+            if parameters["Show first line only"]:
+                print(block[0])
+            elif parameters["Show inetnum"] or parameters["Show inet6num"]:
+                if block[0].startswith("inetnum:") and parameters["Show inetnum"]:
+                    process_inetnum_block(block)
 
-            if block[0].startswith("inet6num:") and parameters["Show inet6num"]:
-                process_inet6num_block(block)
-        else:
-            for line in block:
-                print(line)
-            print()
+                if block[0].startswith("inet6num:") and parameters["Show inet6num"]:
+                    process_inet6num_block(block)
+            else:
+                for line in block:
+                    print(line)
+                print()
+
+        if parameters["Show summary"] or parameters["Show summary only"]:
+            record_type = re.sub(r":.*", "", block[0])
+            if not record_type.startswith("#"):
+                if record_type in parameters["Summary"]:
+                    parameters["Summary"][record_type] += 1
+                else:
+                    parameters["Summary"][record_type] = 1
 
 
 ################################################################################
@@ -283,8 +372,9 @@ def parse_blocks(file):
     line = file.readline()
     while line:
         if line.strip() == "":
-            process_block(block)
-            block = []
+            if block:
+                process_block(block)
+                block = []
         else:
             block.append(line.strip())
 
@@ -325,7 +415,7 @@ def main():
             with open(parameters["Excluded filename"], "rt", encoding="utf-8", errors="ignore") as file:
                 line = file.readline()
                 while line:
-                    parameters["Excluded list"].append(line.strip())
+                    parameters["Excluded list"].append(line.lower().strip())
                     line = file.readline()
         else:
             logging.critical("Parameter error: '%s' is not an existing or readable file name", parameters["Excluded filename"])
@@ -348,6 +438,17 @@ def main():
         else:
             logging.critical("Parameter error: '%s' is not an existing or readable directory name", parameters["Dirname"])
             exit_status = 1
+
+    # Print summary
+    if parameters["Filename"] or parameters["Dirname"]:
+        if parameters["Show summary"] or parameters["Show summary only"]:
+            print()
+            print("Matching records summary:")
+            for key, value in parameters["Summary"].items():
+                print("    {}: {}".format(key, value))
+    else:
+        logging.error("You didn't provide any database to use!")
+        exit_status = 1
 
     sys.exit(exit_status)
 

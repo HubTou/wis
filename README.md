@@ -46,7 +46,7 @@ Use the *-e|--exclude FILE* option to provide a one-excluded-case-insensitive-ke
 
 You'll then obtain a list of records matching at least one of your keywords, and not matching any of the excluded keywords.
 
-If you use the *-1|--first* option, you'll instead only obtain the first line of each matching record (whether it is an inetnum, inet6num, organisation, aut-num, role, route or mntner record).
+If you use the *-1|--first* option, you'll instead only obtain the first line of each matching record.
 
 If you use the *-i|--inet4* and/or *-I|--inet6* option(s), you'll instead obtain only matching inetnum or inet6num records reformatted as a pipe-separated-values of networks:
 ```
@@ -155,3 +155,4 @@ LACNIC does not provide useful *inetnum* and *inet6num* information.
 ARIN, APNIC/IDNIC, APNIC/CNNIC, APNIC/VNNIC and APNIC/IRINN do not provide *domain*, *inetnum*, *inet6num* and *organisation* information at all.
 
 However you can find *route* information from all of them, which can then be used with regular WHOIS queries.
+
