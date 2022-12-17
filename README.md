@@ -7,6 +7,8 @@ pip install [PNU](https://pypi.org/project/PNU/)
 <br>
 pip install [pytnix](https://pypi.org/project/pytnix/)
 
+:warning: This tool is not yet included in the PNU and pytnix distributions
+
 # WIS(1)
 
 ## NAME
