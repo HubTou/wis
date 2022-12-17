@@ -15,7 +15,7 @@ import sys
 import libpnu
 
 # Version string used by the what(1) and ident(1) commands:
-ID = "@(#) $Id: wis - Bulk WHOIS search v1.0.0 (December 17, 2022) by Hubert Tournier $"
+ID = "@(#) $Id: wis - Bulk WHOIS search v1.0.1 (December 17, 2022) by Hubert Tournier $"
 
 # Default parameters. Can be overcome by environment variables, then command line options
 parameters = {

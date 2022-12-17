@@ -7,8 +7,6 @@ pip install [PNU](https://pypi.org/project/PNU/)
 <br>
 pip install [pytnix](https://pypi.org/project/pytnix/)
 
-:warning: This tool is not yet included in the PNU and pytnix distributions
-
 # WIS(1)
 
 ## NAME
@@ -132,7 +130,7 @@ The **wis** utility is not a standard UNIX command.
 This implementation tries to follow the [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide for [Python](https://www.python.org/) code.
 
 ## PORTABILITY
-To be tested under Windows.
+Tested OK under Windows.
 
 ## HISTORY
 This implementation was made for the [PNU project](https://github.com/HubTou/PNU).
