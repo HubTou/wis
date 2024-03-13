@@ -14,6 +14,8 @@ pip install [pytnix](https://pypi.org/project/pytnix/)
 ## NAME
 wis - Bulk WHOIS Search
 
+[![Servier Inspired](https://raw.githubusercontent.com/RomualdRousseau/ServierHub/main/badges/inspired.svg)](https://servier.com/)
+
 ## SYNOPSIS
 **wis**    
 \[-1|--first\]
