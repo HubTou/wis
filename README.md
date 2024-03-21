@@ -7,14 +7,12 @@ pip install [PNU](https://pypi.org/project/PNU/)
 <br>
 pip install [pytnix](https://pypi.org/project/pytnix/)
 
-:warning: This tool is not yet included in the PNU and pytnix distributions
-
 # WIS(1)
 
 ## NAME
 wis - Bulk WHOIS Search
 
-[![Servier Inspired](https://raw.githubusercontent.com/RomualdRousseau/ServierHub/main/badges/inspired.svg)](https://github.com/ServierHub)
+[![Servier Inspired](https://raw.githubusercontent.com/servierhub/.github/main/badges/inspired.svg)](https://github.com/ServierHub/)
 
 ## SYNOPSIS
 **wis**    
